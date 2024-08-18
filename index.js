@@ -79,7 +79,7 @@ async function run() {
         })
 
         app.get('/products', async (req, res) => {
-            let { page = 1, limit = 6, search, sorting, category, brandName } = req.query;
+            let { page = 1, limit = 6, search, sorting, category, brandName, min, max } = req.query;
             const skip = (page - 1) * limit;
             const query = {};
             let option = {};
@@ -103,6 +103,13 @@ async function run() {
                     }
                 }
             }
+            query.price = {};
+            if (min) {
+                query.price.$gte = Number(min);
+            }
+            if (max) {
+                query.price.$lte = Number(max);
+            }
 
             if (category) {
                 query.category = new RegExp(category, 'i');
@@ -116,9 +123,18 @@ async function run() {
         })
 
         app.get('/productCount', async (req, res) => {
-            let { search, category, brandName } = req.query;
+            let { search, category, brandName, min, max } = req.query;
 
             const query = {};
+            query.price = {};
+
+            if (min) {
+                query.price.$gte = Number(min);
+            }
+            if (max) {
+                query.price.$lte = Number(max);
+            }
+
 
             if (search) {
                 query.name = new RegExp(search, 'i');
